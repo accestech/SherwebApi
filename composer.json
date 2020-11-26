@@ -1,0 +1,25 @@
+{
+  "name": "acces-tech/sherweb-api",
+  "description": "API Interface for Sherweb API",
+  "minimum-stability": "stable",
+  "license": "proprietary",
+  "authors": [
+    {
+      "name": "Vincent D. Handfield",
+      "email": "vincent@accestech.com"
+    }
+  ],
+  "require": {
+    "php": "^7.3.11",
+    "ext-json": "*",
+    "guzzlehttp/guzzle": "7.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "SherwebApi\\": "src/"
+    },
+    "files": [
+      "src/constants.php"
+    ]
+  }
+}
