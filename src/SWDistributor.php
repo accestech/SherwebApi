@@ -1,8 +1,6 @@
 <?php
 
-
 namespace SherwebApi;
-
 
 use GuzzleHttp\Client;
 
@@ -28,18 +26,20 @@ class SWDistributor
     {
         $this->auth = $auth;
         $this->subscriptionKey = $subscriptionKey;
-        $this->client = new Client([
+        $this->client = new Client(
+            [
             'base_uri' => BASE_URI,
             'verify' => false,
             'headers' => [
-                'Authorization' => 'Bearer '.$auth->getAccessToken()
+                'Authorization' => 'Bearer ' . $auth->getAccessToken()
             ]
-        ]);
+            ]
+        );
     }
 
     public function getPayableCharges(string $date = '')
     {
-        $url = ENDPOINT_PAYABLE_CHARGES.'?subscription-key='.$this->subscriptionKey;
+        $url = ENDPOINT_PAYABLE_CHARGES . '?subscription-key=' . $this->subscriptionKey;
         if ($date != '') {
             $url .= '&date=' . $date;
         }
