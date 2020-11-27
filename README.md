@@ -29,6 +29,5 @@ $payableCharges = $distributor->getPayableCharges();
 
 # Todo
  - [ ] Error handling
- - [ ] AuthToken refresh when expire
  - [ ] Unit testing
  - [ ] Create a proper package
