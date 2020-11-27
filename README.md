@@ -30,4 +30,3 @@ $payableCharges = $distributor->getPayableCharges();
 # Todo
  - [ ] Error handling
  - [ ] Unit testing
- - [ ] Create a proper package
