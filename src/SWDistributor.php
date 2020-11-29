@@ -7,9 +7,9 @@ use GuzzleHttp\Client;
 class SWDistributor
 {
     /**
-     * @var SWAuth
+     * @var SWToken
      */
-    private $auth;
+    private $token;
 
     /**
      * @var string
@@ -21,29 +21,38 @@ class SWDistributor
      */
     private $client;
 
+    /**
+     * @var string
+     */
+    private $distributor_endpoint = '/distributor/v1/billing/payable-charges';
 
-    public function __construct(SWAuth $auth, string $subscriptionKey)
+    /**
+     * SWDistributor constructor.
+     * @param  Client  $client
+     * @param  SWToken  $token
+     * @param  string  $subscriptionKey
+     */
+    public function __construct(Client $client, SWToken $token, string $subscriptionKey)
     {
-        $this->auth = $auth;
+        $this->token = $token;
         $this->subscriptionKey = $subscriptionKey;
-        $this->client = new Client(
-            [
-            'base_uri' => BASE_URI,
-            'verify' => false,
-            'headers' => [
-                'Authorization' => 'Bearer ' . $auth->getAccessToken()
-            ]
-            ]
-        );
+        $this->setClient($client);
     }
 
     public function getPayableCharges(string $date = '')
     {
-        $url = ENDPOINT_PAYABLE_CHARGES . '?subscription-key=' . $this->subscriptionKey;
+        $url = $this->distributor_endpoint . '?subscription-key=' . $this->subscriptionKey;
         if ($date != '') {
             $url .= '&date=' . $date;
         }
         $request = $this->client->get($url);
         return json_decode($request->getBody()->getContents());
+    }
+
+    private function setClient(Client $client)
+    {
+        $config = $client->getConfig();
+        $config['headers'] = ['Authorization' => 'Bearer ' . $this->token->getAccessToken()];
+        $this->client = new Client($config);
     }
 }

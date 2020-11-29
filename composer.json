@@ -19,10 +19,7 @@
   "autoload": {
     "psr-4": {
       "SherwebApi\\": "src/"
-    },
-    "files": [
-      "src/constants.php"
-    ]
+    }
   },
   "require-dev": {
     "phpunit/phpunit": "^9.4",

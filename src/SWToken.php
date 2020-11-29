@@ -6,7 +6,7 @@ use GuzzleHttp\Client;
 use Psr\Http\Message\StreamInterface;
 use Carbon\Carbon;
 
-class SWAuth
+class SWToken
 {
     /**
      * The acces token returned by the api
@@ -39,9 +39,19 @@ class SWAuth
     /**
      * 2020-11-25: Only "distributor" is supported at this time
      *
-     * @var string Scope
+     * @var array Scope
      */
-    private string $scope;
+    private array $scopes;
+
+    /**
+     * @var Client
+     */
+    private Client $client;
+
+    /**
+     * @var string
+     */
+    private string $endpoint = '/auth/oidc/connect/token';
 
     //this is a const as SherWeb api does not currently support other types
     private const GRANT_TYPE = "client_credentials";
@@ -49,17 +59,16 @@ class SWAuth
     /**
      * SWAuth constructor.
      *
-     * @param  string $clientId
-     * @param  string $clientSecret
-     * @param  string $scope
-     * @return void
+     * @param  string  $clientId
+     * @param  string  $clientSecret
+     * @param  array  $scopes
      */
-    public function __construct(string $clientId, string $clientSecret, string $scope = 'distributor')
+    public function __construct(Client $client, string $clientId, string $clientSecret, array $scopes = ['distributor'])
     {
+        $this->client = $client;
         $this->clientId = $clientId;
         $this->clientSecret = $clientSecret;
-        $this->scope = $scope;
-        $this->auth();
+        $this->scopes = $scopes;
     }
 
     /**
@@ -70,20 +79,14 @@ class SWAuth
      */
     private function auth()
     {
-        $client = new Client(
-            [
-            'base_uri' => BASE_URI,
-            'verify' => false
-            ]
-        );
         $postData = [
             'client_id' => $this->clientId,
             'client_secret' => $this->clientSecret,
-            'scope' => $this->scope,
+            'scope' => implode(',', $this->scopes),
             'grant_type' => self::GRANT_TYPE,
         ];
 
-        $request = $client->post(ENDPOINT_AUTH, ['form_params' => $postData]);
+        $request = $this->client->post($this->endpoint, ['form_params' => $postData]);
         $this->parseResponse($request->getBody());
     }
 
@@ -130,12 +133,32 @@ class SWAuth
      */
     public function getAccessToken(): string
     {
-        if (is_null($this->accessToken)) {
-            throw new \Exception("No access token");
-        }
-        if (!$this->tokenIsValid()) {
+//        if (!isset($this->accessToken)) {
+//            throw new \Exception("No access token");
+//        }
+        if (!isset($this->accessToken) || !$this->tokenIsValid()) {
             $this->auth();
         }
         return $this->accessToken;
+    }
+
+    /**
+     * Set endpoint URI
+     *
+     * @param  string  $endpoint
+     */
+    public function setEndpoint(string $endpoint)
+    {
+        $this->endpoint = $endpoint;
+    }
+
+    /**
+     * Get endpoint URI
+     *
+     * @return string
+     */
+    public function getEndpoint(): string
+    {
+        return $this->endpoint;
     }
 }
