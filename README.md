@@ -16,15 +16,12 @@ composer require accestech/sherweb-api
 <?php
 require ('vendor/autoload.php');
 
-use Accestech\SherwebApi\SWAuth;
-use Accestech\SherwebApi\SWDistributor;
+use Accestech\SherwebApi\SherwebApi;
 
 // The only scope currently supported by the API is 'distributor' 
-$auth = new SWAuth('api_client_id', 'api_client_secret', 'scope');
+$api = new SherwebApi('api_client_id', 'api_client_secret', 'scope');
 
-$distributor = new SWDistributor($auth, 'subscription_key');
-
-$payableCharges = $distributor->getPayableCharges();
+$api->distributor()->getPayableCharges();
 ```
 
 # Todo
